@@ -1,15 +1,21 @@
-<script setup lang="ts">
+<script setup>
 import Histogram from "~/components/Histogram.vue";
 
 </script>
 
 <template>
-    <div class="container">
-        <div>
-            <h1>Hacker News - Histogram</h1>
+    <div>
+        <div class="container">
+            <div>
+                <h1>Hacker News - Histogram</h1>
+            </div>
+
+            <Histogram/>
         </div>
 
-        <Histogram/>
+        <small>
+            <a href="https://github.com/seanmitchellau/hacker-news-histogram" target="_blank">GitHub</a>
+        </small>
     </div>
 </template>
 
@@ -17,19 +23,26 @@ import Histogram from "~/components/Histogram.vue";
 body {
   font-family: Arial, serif;
   background: rgb(174, 222, 238);
-  background: radial-gradient(circle, rgba(174, 222, 238, 1) 40%, rgba(148, 175, 233, 1) 100%);
+  background: radial-gradient(circle, rgba(174, 222, 238, 0.7) 40%, rgba(148, 175, 233, 0.7) 100%);
+  text-align: center;
+
 
   .container {
     margin: 5rem auto;
-    width: 60%;
+    width: 80%;
+    max-width: 1100px;
     padding: 30px;
     background: #fafafa;
     border-radius: 20px;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 70px rgba(0, 0, 0, 0.4);
     border: 2px solid grey;
     justify-content: center;
     text-align: center;
-    min-height: 40vh;
+    min-height: 30vh;
   }
+
+    h1 {
+        margin-bottom: 32px;
+    }
 }
 </style>

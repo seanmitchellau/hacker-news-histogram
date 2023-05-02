@@ -2,12 +2,17 @@
 import {ref} from 'vue';
 import axios from 'axios';
 import UserSearch from '~/components/UserSearch.vue';
+import Chart from "~/components/Chart.vue";
 
 const loading = ref(false);
 const histogram = ref([]);
+const resolvedPromises = ref(0);
+const totalPromises = ref(0);
 
 const searchUser = async (username) => {
     loading.value = true;
+    resolvedPromises.value = 0;
+    totalPromises.value = 0;
 
     try {
         // https://github.com/HackerNews/API
@@ -22,9 +27,15 @@ const searchUser = async (username) => {
         }
 
         // hopefully 500 concurrent requests is not too much for the API or the browser
-        const storiesPromises = user.submitted.slice(0, 500).map(id =>
-            axios.get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`),
-        );
+        const storiesPromises = user.submitted.slice(0, 500).map((id) => {
+            totalPromises.value++;
+            return axios
+                .get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+                .then((response) => {
+                    resolvedPromises.value++;
+                    return response;
+                });
+        });
         const storiesResponses = await Promise.all(storiesPromises);
 
         const stories = storiesResponses.map(response => response.data);
@@ -53,10 +64,16 @@ const searchUser = async (username) => {
         <UserSearch @search="searchUser" :loading="loading"/>
 
         <div class="histogram">
-            <div v-if="loading">Retrieving data. Please wait...</div>
+            <div v-if="loading">
+                Retrieving data. Please wait...
+                <div class="loading-bar">
+                    <div class="progress" :style="{ width: (resolvedPromises / totalPromises * 100) + '%' }"></div>
+                </div>
+                <small>({{ resolvedPromises }} / {{ totalPromises }})</small>
+            </div>
 
             <div v-else-if="histogram.length">
-                {{ histogram }}
+                <Chart :chart-data="histogram"/>
             </div>
         </div>
     </div>
@@ -65,5 +82,19 @@ const searchUser = async (username) => {
 <style scoped lang="scss">
 .histogram {
   margin: 30px;
+
+    .loading-bar {
+        margin: 20px auto;
+        max-width: 300px;
+        padding: 3px;
+        background: #ccc;
+        border-radius: 5px;
+
+        .progress {
+            background: green;
+            height: 3px;
+            border-radius: 5px;
+        }
+    }
 }
 </style>

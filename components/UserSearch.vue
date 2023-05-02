@@ -24,7 +24,7 @@ const search = () => {
 
 <style scoped lang="scss">
 div {
-    margin-top: 30px;
+    margin: 32px 0;
 }
 
 input, button {
@@ -42,7 +42,7 @@ button {
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 
-    &:hover {
+    &:not(:disabled):hover {
         color: #fff;
         background: #575757;
         border-color: #575757;
