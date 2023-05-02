@@ -7,5 +7,5 @@ export default defineNuxtConfig({
         },
     },
 
-    target: 'static',
+    ssr: true,
 })

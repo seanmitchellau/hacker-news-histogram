@@ -26,9 +26,8 @@ body {
   background: radial-gradient(circle, rgba(174, 222, 238, 0.7) 40%, rgba(148, 175, 233, 0.7) 100%);
   text-align: center;
 
-
   .container {
-    margin: 5rem auto;
+    margin: 3rem auto;
     width: 80%;
     max-width: 1100px;
     padding: 30px;

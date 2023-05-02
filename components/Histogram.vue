@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue';
+import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import UserSearch from '~/components/UserSearch.vue';
 import Chart from "~/components/Chart.vue";
@@ -50,6 +50,7 @@ const searchUser = async (username) => {
             }
         });
 
+        localStorage.setItem('lastHistogramData', JSON.stringify(histogramData));
         histogram.value = histogramData;
     } catch (error) {
         console.error('Error fetching data', error);
@@ -57,6 +58,13 @@ const searchUser = async (username) => {
         loading.value = false;
     }
 };
+
+onMounted(() => {
+    const lastHistogramData = localStorage.getItem('lastHistogramData');
+    if (lastHistogramData) {
+        histogram.value = JSON.parse(lastHistogramData);
+    }
+});
 </script>
 
 <template>
@@ -64,16 +72,20 @@ const searchUser = async (username) => {
         <UserSearch @search="searchUser" :loading="loading"/>
 
         <div class="histogram">
-            <div v-if="loading">
+            <div class="loading" v-if="loading">
                 Retrieving data. Please wait...
-                <div class="loading-bar">
+                <div class="loading-bar" v-if="totalPromises > 0">
                     <div class="progress" :style="{ width: (resolvedPromises / totalPromises * 100) + '%' }"></div>
                 </div>
-                <small>({{ resolvedPromises }} / {{ totalPromises }})</small>
+                <small v-if="totalPromises > 0">({{ resolvedPromises }} / {{ totalPromises }})</small>
             </div>
 
             <div v-else-if="histogram.length">
                 <Chart :chart-data="histogram"/>
+            </div>
+
+            <div v-else-if="histogram.length === 0">
+                No data to display.
             </div>
         </div>
     </div>
@@ -81,7 +93,11 @@ const searchUser = async (username) => {
 
 <style scoped lang="scss">
 .histogram {
-  margin: 30px;
+  margin: 10px;
+
+    .loading {
+        margin-top: 75px;
+    }
 
     .loading-bar {
         margin: 20px auto;

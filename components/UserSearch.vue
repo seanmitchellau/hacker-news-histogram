@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits, onMounted } from 'vue';
 
 const props = defineProps({
     loading: Boolean,
@@ -11,7 +11,16 @@ const emit = defineEmits(['search']);
 
 const search = () => {
     emit('search', username.value);
+
+    localStorage.setItem('lastUsername', username.value);
 };
+
+onMounted(() => {
+    const lastUsername = localStorage.getItem('lastUsername');
+    if (lastUsername) {
+        username.value = lastUsername;
+    }
+});
 </script>
 
 <template>
@@ -34,7 +43,7 @@ input, button {
 }
 
 input {
-    margin-right: 10px;
+    margin: 10px;
 }
 
 button {
